@@ -73,8 +73,9 @@
   /* ===== RCMs ===== */
   .rcm{ display:flex; gap:11px; align-items:flex-start; padding:9px 0; border-top:1px solid var(--line); }
   .rcm:first-child{ border-top:none; padding-top:1px; }
-  .rcm-code{ flex:0 0 auto; font-weight:700; font-size:11px; color:var(--brand-deep); background:var(--brand-wash); border-radius:7px; padding:5px 7px; min-width:64px; text-align:center; }
+  .rcm-code{ flex:0 0 auto; width:74px; word-break:break-word; font-weight:700; font-size:11px; line-height:1.25; color:var(--brand-deep); background:var(--brand-wash); border-radius:7px; padding:5px 6px; text-align:center; }
   .rcm-body{ flex:1 1 auto; min-width:0; } .rcm-title{ font-weight:600; font-size:13.5px; } .rcm-note{ color:var(--muted); font-size:12px; margin-top:1px; }
+  .who{ display:inline-flex; align-items:center; gap:3px; font-size:11px; color:var(--brand-deep); background:var(--brand-wash); border-radius:6px; padding:1px 7px; margin-top:4px; font-weight:600; }
 
   /* ===== LISTAS ===== */
   ul.clean{ list-style:none; margin:0; padding:0; }
@@ -95,10 +96,10 @@
 
   /* ===== TIMELINE / GANTT DE MARCOS (grid único, alinhado) ===== */
   .tl-scroll{ overflow-x:auto; }
-  .tlg{ display:grid; grid-template-columns:200px repeat(16, minmax(0,1fr)); min-width:720px; font-size:11.5px; }
+  .tlg{ display:grid; grid-template-columns:200px repeat(16, minmax(0,1fr)); min-width:1180px; font-size:11.5px; }
   .tlg-yr{ text-align:center; font-weight:700; color:var(--brand-deep); font-size:11px; align-self:end; padding-bottom:1px; }
   .tlg-mo{ text-align:center; font-weight:700; color:var(--brand-deep); border-bottom:2px solid var(--brand); height:22px; line-height:22px; }
-  .tlg-q{ text-align:center; color:var(--muted); font-size:9px; height:16px; line-height:16px; }
+  .tlg-q{ text-align:center; color:var(--muted); font-size:8.5px; min-height:16px; line-height:1.15; white-space:normal; padding:1px 2px; align-self:end; }
   .tlg-name{ grid-column:1; display:flex; align-items:center; padding:4px 10px 4px 0; border-bottom:1px solid var(--line); font-weight:600; color:var(--ink); font-size:12.5px; line-height:1.2; }
   .tlg-band{ border-bottom:1px solid var(--line); border-right:1px solid var(--line);
     background-image:linear-gradient(to right,var(--line) 1px,transparent 1px), linear-gradient(to right,var(--line-mo) 1px,transparent 1px);
@@ -137,6 +138,9 @@
   .p-req{background:var(--f-req);} .p-anl{background:var(--f-anl);} .p-dev{background:var(--f-dev);}
   .p-tst{background:var(--f-tst);} .p-hml{background:var(--f-hml);} .p-apr{background:var(--f-apr);} .p-agn{background:var(--f-agn);}
   .board-empty{ padding:24px; text-align:center; color:var(--muted); font-size:13px; }
+  .board-inner{ position:relative; width:max-content; min-width:100%; }
+  .board-nowline{ position:absolute; top:0; width:2px; background:var(--late); z-index:4; pointer-events:none; }
+  .board-nowflag{ position:absolute; top:0; left:0; background:var(--late); color:#fff; font-size:9px; font-weight:700; padding:2px 6px; border-radius:0 0 5px 0; white-space:nowrap; }
   .upnote{ font-size:11px; color:var(--muted); margin-top:8px; }
 
   /* ===== sub-linhas do gantt (módulos) ===== */
@@ -469,26 +473,26 @@ function render(){
       ${w.rcms.map(r=>`
         <div class="rcm">
           <span class="rcm-code">${esc(r.cod)}</span>
-          <div class="rcm-body"><div class="rcm-title">${esc(r.titulo)}</div>${r.nota?`<div class="rcm-note">${esc(r.nota)}</div>`:''}</div>
+          <div class="rcm-body"><div class="rcm-title">${esc(r.titulo)}</div>${r.nota?`<div class="rcm-note">${esc(r.nota)}</div>`:''}${r.resp?`<div class="who">Resp.: ${esc(r.resp)}</div>`:''}</div>
           <span><span class="badge ${(STATUS[r.status]||STATUS.run).c}">${(STATUS[r.status]||STATUS.run).t}</span></span>
         </div>`).join('')}
     </div>`;
   const cardDec = `
     <div class="card">
       <h2><span class="ic">${IC.check}</span> Decisões importantes</h2>
-      <ul class="clean">${w.decisoes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+      <ul class="clean">${w.decisoes.map(x=>{ const t=(typeof x==='string')?x:(x.texto||''); const rp=(x&&x.resp)?x.resp:''; return `<li>${esc(t)}${rp?`<div class="who">Resp.: ${esc(rp)}</div>`:''}</li>`; }).join('')}</ul>
     </div>`;
   document.getElementById('c-mid').innerHTML = cardRcm + cardDec;
 
   const cardAg = `
     <div class="card">
       <h2><span class="ic">${IC.cal}</span> Próximas agendas</h2>
-      ${sortAgendas(w.agendas).map(a=>`<div class="agenda"><div class="agenda-date">${esc(a.data)}</div><div class="agenda-text">${esc(a.texto)}${a.sub?`<small>${esc(a.sub)}</small>`:''}</div></div>`).join('')}
+      ${sortAgendas(w.agendas).map(a=>`<div class="agenda"><div class="agenda-date">${esc(a.data)}</div><div class="agenda-text">${esc(a.texto)}${a.sub?`<small>${esc(a.sub)}</small>`:''}${a.resp?`<div class="who">Resp.: ${esc(a.resp)}</div>`:''}</div></div>`).join('')}
     </div>`;
   const cardAt = `
     <div class="card">
       <h2><span class="ic">${IC.alert}</span> Pontos de atenção</h2>
-      ${w.atencao.map(p=>`<div class="attn"><span><span class="badge ${(SEV[p.sev]||SEV.media).c}">${(SEV[p.sev]||SEV.media).t}</span></span><div class="attn-body">${esc(p.texto)}${p.sub?`<small>${esc(p.sub)}</small>`:''}</div></div>`).join('')}
+      ${w.atencao.map(p=>`<div class="attn"><span><span class="badge ${(SEV[p.sev]||SEV.media).c}">${(SEV[p.sev]||SEV.media).t}</span></span><div class="attn-body">${esc(p.texto)}${p.sub?`<small>${esc(p.sub)}</small>`:''}${p.resp?`<div class="who">Resp.: ${esc(p.resp)}</div>`:''}</div></div>`).join('')}
     </div>`;
   document.getElementById('c-bot').innerHTML = cardAg + cardAt;
 }
@@ -509,7 +513,7 @@ function timeline(c, atual){
   // meses
   c.meses.forEach((m,k)=> cells.push(`<div class="tlg-mo" style="grid-row:2;grid-column:${2+k*2}/${4+k*2}">${esc(m)}</div>`));
   // quinzenas
-  for(let k=0;k<16;k++){ cells.push(`<div class="tlg-q" style="grid-row:3;grid-column:${2+k}">${(k%2===0)?'1ª Q':'2ª Q'}</div>`); }
+  for(let k=0;k<16;k++){ cells.push(`<div class="tlg-q" style="grid-row:3;grid-column:${2+k}">${(k%2===0)?'1ª quinzena':'2ª quinzena'}</div>`); }
   // linhas
   disp.forEach((d,i)=>{ const R=4+i; const m=d.m;
     cells.push(`<div class="tlg-name${d.sub?' sub':''}" style="grid-row:${R}">${esc(m.nome)}</div>`);
@@ -543,6 +547,52 @@ function renderCronoIndra(){
 }
 
 /* ---------------- board Indra ---------------- */
+// calcula a sprint atual pela data de "atualizado" da semana mais recente
+function parseDM(s, defMonth){
+  const m=String(s).match(/(\d{1,2})(?:\/(\d{1,2}))?/);
+  if(!m) return null;
+  const d=+m[1], mo=m[2]?+m[2]:defMonth;
+  if(!mo) return null;
+  return {d, m:mo};
+}
+function parseSprintRange(rng){
+  const parts=String(rng).split(/\s+A\s+/i);
+  if(parts.length<2) return null;
+  const end=parseDM(parts[1]);
+  const start=parseDM(parts[0], end?end.m:null);
+  if(!start||!end) return null;
+  return { start:new Date(2026,start.m-1,start.d), end:new Date(2026,end.m-1,end.d,23,59,59) };
+}
+function currentSprintIdx(){
+  const wk=SEMANAS[idxSemanaAtual()];
+  const t=wk?parseDataBR(wk.atualizado):0;
+  const ref=t?new Date(t):new Date();
+  let inRange=-1, lastBefore=-1;
+  INDRA.sprints.forEach((s,i)=>{
+    const mm=String(s).match(/\((.+)\)/); if(!mm) return;
+    const r=parseSprintRange(mm[1]); if(!r) return;
+    if(ref>=r.start && ref<=r.end) inRange=i;
+    if(r.start<=ref) lastBefore=i;
+  });
+  return inRange>=0?inRange:lastBefore;
+}
+function placeBoardNowline(curIdx){
+  const scroll=document.getElementById('board');
+  if(!scroll) return;
+  const inner=scroll.querySelector('.board-inner');
+  const table=scroll.querySelector('table.board');
+  if(!inner||!table) return;
+  const old=inner.querySelector('.board-nowline'); if(old) old.remove();
+  if(curIdx==null||curIdx<0) return;
+  const ths=table.querySelectorAll('thead th');
+  const th=ths[curIdx+1]; if(!th) return;
+  const line=document.createElement('div');
+  line.className='board-nowline';
+  line.style.left=th.offsetLeft+'px';
+  line.style.height=table.offsetHeight+'px';
+  line.innerHTML='<span class="board-nowflag">Estamos aqui</span>';
+  inner.appendChild(line);
+}
 function phaseClass(code){
   const first=String(code).split('/')[0];
   return { REQ:'p-req',RCM:'p-req',ANL:'p-anl',APR:'p-apr',DEV:'p-dev',TST:'p-tst',HML:'p-hml',AGENDA:'p-agn',QA:'p-agn' }[first]||'p-agn';
@@ -565,8 +615,10 @@ function renderBoard(){
     return `<tr><td class="c-item"><div class="it-name">${esc(it.item)}</div>${rcm?`<div class="it-meta">${rcm}</div>`:''}</td>${cells}</tr>`;
   }).join('') : `<tr><td class="board-empty" colspan="${INDRA.sprints.length+1}">Nenhum item para o filtro atual.</td></tr>`;
 
-  document.getElementById('board').innerHTML = `<table class="board"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+  document.getElementById('board').innerHTML = `<div class="board-inner"><table class="board"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
   document.getElementById('bcount').textContent = `${rows.length} de ${INDRA.items.length} itens`;
+  const curIdx = currentSprintIdx();
+  requestAnimationFrame(()=>placeBoardNowline(curIdx));
 }
 
 /* ---------------- upload de nova planilha ---------------- */
@@ -723,10 +775,10 @@ function mapApiSemana(s){
     label: String(s.rotulo || ''),
     atualizado: String(s.atualizadoEm || ''),
     atual: Number(s.estamosAqui) || 1,
-    rcms: (s.ocorrencias||[]).map(o=>({ cod:o.codigo, titulo:o.titulo, nota:o.nota, status:o.status })),
-    decisoes: s.decisoes || [],
-    agendas: (s.agendas||[]).map(a=>({ data:a.data, texto:a.agenda, sub:a.detalhe })),
-    atencao: (s.pontosAtencao||[]).map(p=>({ texto:p.ponto, sub:p.detalhe, sev:p.severidade })),
+    rcms: (s.ocorrencias||[]).map(o=>({ cod:o.codigo, titulo:o.titulo, nota:o.nota, status:o.status, resp:o.responsavel||'' })),
+    decisoes: (s.decisoes||[]).map(d=> (typeof d==='string')?{texto:d, resp:''}:{texto:d.texto||d.decisao||'', resp:d.responsavel||''} ),
+    agendas: (s.agendas||[]).map(a=>({ data:a.data, texto:a.agenda, sub:a.detalhe, resp:a.responsavel||'' })),
+    atencao: (s.pontosAtencao||[]).map(p=>({ texto:p.ponto, sub:p.detalhe, sev:p.severidade, resp:p.responsavel||'' })),
   };
 }
 
