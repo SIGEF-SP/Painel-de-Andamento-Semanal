@@ -142,6 +142,25 @@
   .board-nowline{ position:absolute; top:0; width:2px; background:var(--late); z-index:4; pointer-events:none; }
   .board-nowflag{ position:absolute; top:0; left:0; background:var(--late); color:#fff; font-size:9px; font-weight:700; padding:2px 6px; border-radius:0 0 5px 0; white-space:nowrap; }
   .upnote{ font-size:11px; color:var(--muted); margin-top:8px; }
+  /* ===== INFRA ===== */
+  .infra-scroll{ overflow:auto; border:1px solid var(--line); border-radius:10px; }
+  table.infra{ border-collapse:separate; border-spacing:0; font-size:12.5px; width:100%; }
+  table.infra th, table.infra td{ padding:8px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  table.infra thead th{ position:sticky; top:0; background:var(--brand-wash); color:var(--brand-deep); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap; z-index:1; }
+  table.infra tbody tr:last-child td{ border-bottom:none; }
+  table.infra .i-item{ font-weight:600; color:var(--ink); min-width:220px; }
+  table.infra .i-obs{ color:var(--muted); font-size:11.5px; min-width:180px; }
+  .tag{ display:inline-block; font-size:10.5px; font-weight:700; border-radius:6px; padding:2px 8px; white-space:nowrap; }
+  .tag.team{ color:var(--brand-deep); background:var(--brand-wash); }
+  .prio{ display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; white-space:nowrap; }
+  .prio::before{ content:""; width:8px; height:8px; border-radius:50%; }
+  .prio.alta::before{ background:var(--late); } .prio.alta{ color:var(--late); }
+  .prio.media::before{ background:var(--warn); } .prio.media{ color:#B9822A; }
+  .prio.baixa::before{ background:var(--wait); } .prio.baixa{ color:var(--wait); }
+  .prio.none::before{ background:var(--line); } .prio.none{ color:var(--muted); }
+  .jan{ display:inline-block; font-size:10.5px; font-weight:700; border-radius:6px; padding:2px 8px; white-space:nowrap; }
+  .jan.abertura{ color:#1F7A4D; background:#E4F4EC; }
+  .jan.flex{ color:var(--brand-deep); background:var(--brand-wash); }
 
   /* ===== sub-linhas do gantt (módulos) ===== */
   .tlg-name.sub{ padding-left:16px; font-weight:500; color:var(--muted); font-size:11.5px; }
@@ -162,7 +181,7 @@
   .ed-sec-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-size:13.5px; }
   .ed-add{ font:inherit; font-size:12px; font-weight:600; color:var(--brand); background:var(--brand-wash); border:0; border-radius:8px; padding:5px 11px; cursor:pointer; }
   .ed-row{ display:grid; gap:8px; grid-template-columns:1fr; background:#FAFCFE; border:1px solid var(--line); border-radius:8px; padding:10px; margin-bottom:8px; position:relative; }
-  @media(min-width:640px){ .ed-row.occ{ grid-template-columns:110px 1fr 1fr 130px; } .ed-row.ag{ grid-template-columns:120px 1fr 1fr; } .ed-row.at{ grid-template-columns:1fr 1fr 110px; } }
+  @media(min-width:640px){ .ed-row.occ{ grid-template-columns:100px 1fr 1fr 120px 130px; } .ed-row.dec{ grid-template-columns:1fr 150px; } .ed-row.ag{ grid-template-columns:110px 1fr 1fr 130px; } .ed-row.at{ grid-template-columns:1fr 1fr 100px 130px; } }
   .ed-row .ed-del{ position:absolute; top:6px; right:6px; border:0; background:transparent; color:var(--late); font-size:16px; cursor:pointer; line-height:1; }
   .ed-actions{ display:flex; gap:10px; margin-top:20px; }
   .ed-gen{ font:inherit; font-size:13px; font-weight:700; color:#fff; background:var(--brand); border:0; border-radius:8px; padding:9px 18px; cursor:pointer; }
@@ -243,6 +262,11 @@
         <span><i style="background:var(--f-agn)"></i>Agenda/QA</span>
       </div>
       <div class="upnote" id="upnote">Dados carregados da planilha <b>BACKLOG_SIGEF_FASE02_v7</b>. Para atualizar, envie uma nova versão em .xlsx (requer conexão para leitura no navegador).</div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h2><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E6DB4" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7.5h.01M7 17h.01"/></svg></span> Backlog de Infraestrutura (Dev / Infra)</h2>
+      <div class="infra-scroll" id="c-infra"></div>
     </div>
   </section>
 
@@ -413,6 +437,7 @@ let SEMANAS = [
 
 // dados do cronograma de sprints (extraídos da planilha; substituíveis por upload)
 let INDRA = {"sprints": ["SP12 (15 A 26/06)", "SP13 (29/06 A 10/07)", "SP14 (13 A 24/07)", "SP15 (27/07 A 07/08)", "SP16 (10 A 21/08)", "SP17 (24/08 A 04/09)", "SP18 (07 A 18/09)", "SP19 (21/09 A 02/10)", "SP20 (05 A 16/10)"], "items": [{"item": "Integração SEI - REVERSO", "rcm": "", "prio": "1", "sit": "", "cells": ["", "", "REQ", "", "", "", "", "", ""]}, {"item": "Reestruturação LOA Parte 2", "rcm": "36", "prio": "1", "sit": "Em Desenvolvimento", "cells": ["ANL/DEV", "DEV/TST", "TST/HML", "", "", "", "", "", ""]}, {"item": "Api complementos", "rcm": "43", "prio": "1", "sit": "Em Aprovação", "cells": ["APR", "ANL", "ANL", "DEV", "TST/HML", "", "", "", ""]}, {"item": "Marcadores LOA", "rcm": "40", "prio": "2", "sit": "Em Desenvolvimento", "cells": ["ANL/DEV", "DEV/TST", "TST/HML", "", "", "", "", "", ""]}, {"item": "Melhoria Avisos", "rcm": "44", "prio": "2", "sit": "Paralisado", "cells": ["", "", "", "", "", "", "", "TST/HML", ""]}, {"item": "Nova Interface LOA e PPA", "rcm": "", "prio": "2", "sit": "Backlog", "cells": ["", "", "", "", "", "", "", "TST/HML", ""]}, {"item": "Prestadores", "rcm": "41", "prio": "2", "sit": "Em concepção", "cells": ["APR", "", "", "ANL", "ANL/DEV", "DEV", "DEV/TST", "TST/HML", ""]}, {"item": "PAP-IPVA DHF 800-1A E DHF 800- 2A", "rcm": "41", "prio": "2", "sit": "Planilha Homologação", "cells": ["APR", "", "", "ANL", "ANL/DEV", "DEV", "DEV/TST", "TST/HML", ""]}, {"item": "NOTA FISCAL PAULISTA", "rcm": "41", "prio": "2", "sit": "Planilha Homologação", "cells": ["APR", "", "", "ANL", "ANL/DEV", "DEV", "DEV/TST", "TST/HML", ""]}, {"item": "MULTAS MUNICÍPIOS CONVENIADOS – DHI20", "rcm": "41", "prio": "2", "sit": "Planilha Homologação", "cells": ["APR", "", "", "ANL", "ANL/DEV", "DEV", "DEV/TST", "TST/HML", ""]}, {"item": "RENAINF MUNICÍPIOS CONVENIADOS – MR3 DHI23", "rcm": "41", "prio": "2", "sit": "Planilha Homologação", "cells": ["APR", "", "", "ANL", "ANL/DEV", "DEV", "DEV/TST", "TST/HML", ""]}, {"item": "RENAINF ÓRGÃOS AUTUADORES", "rcm": "41", "prio": "2", "sit": "Planilha Homologação", "cells": ["APR", "", "", "ANL", "ANL/DEV", "DEV", "DEV/TST", "TST/HML", ""]}, {"item": "Automatização de Receita via Extrato Bancário", "rcm": "16", "prio": "2", "sit": "Em Aprovação", "cells": ["APR", "ANL", "ANL", "ANL/DEV", "DEV/TST", "TST/HML", "", "", ""]}, {"item": "Melhorias APIs - decorrentes da homologação da Fase 1", "rcm": "", "prio": "3", "sit": "", "cells": ["AGENDA/QA", "", "", "", "", "", "", "", ""]}, {"item": "Parcelamento de Restos", "rcm": "12", "prio": "3", "sit": "Em aprovação", "cells": ["RCM/APR", "ANL/DEV", "TST", "HML", "", "", "", "", ""]}, {"item": "PPA Parte 1", "rcm": "42", "prio": "3", "sit": "Em Requisito", "cells": ["RCM/APR", "", "", "", "", "", "", "", ""]}, {"item": "SAT", "rcm": "45", "prio": "4", "sit": "Em Requisito", "cells": ["RCM/APR", "ANL", "ANL/DEV", "DEV", "DEV/TST", "TST/HML", "", "", ""]}, {"item": "SAT Cancelar Arquivo", "rcm": "15", "prio": "4", "sit": "Em aprovação", "cells": ["RCM/APR", "ANL/DEV", "TST", "HML", "", "", "", "", ""]}, {"item": "SAT Distribuição de Fontes", "rcm": "14", "prio": "4", "sit": "Em aprovação", "cells": ["RCM/APR", "ANL/DEV", "TST", "HML", "", "", "", "", ""]}, {"item": "PPA Parte 2", "rcm": "", "prio": "4", "sit": "Backlog", "cells": ["", "", "", "", "REQ", "RCM/APR", "", "", ""]}, {"item": "Folha Pagamento Manual", "rcm": "13", "prio": "5", "sit": "Em aprovação", "cells": ["RCM/APR", "ANL/DEV", "TST", "HML", "", "", "", "", ""]}, {"item": "Definir  Programação- Limite de Empenho", "rcm": "", "prio": "5", "sit": "Backlog", "cells": ["AGENDA", "", "", "", "", "", "", "", ""]}, {"item": "SAO (Alterações Orçamentárias)", "rcm": "6", "prio": "5", "sit": "Paralisado", "cells": ["", "", "REQ", "RCM/APR", "", "", "", "", ""]}, {"item": "Folha Pagamento Diretas (SGGD)", "rcm": "", "prio": "6", "sit": "Em Requisito", "cells": ["", "REQ", "REQ/RCM", "RCM/APR", "", "", "", "", ""]}, {"item": "Centro de Custo - Profisco e Custos", "rcm": "", "prio": "7", "sit": "", "cells": ["", "", "AGENDA", "REQ", "", "", "", "", ""]}, {"item": "Restituição SAT", "rcm": "", "prio": "7", "sit": "Em Requisito", "cells": ["", "", "", "REQ/RCM", "RCM/APR", "", "", "", ""]}, {"item": "Melhorias REINF", "rcm": "11", "prio": "8", "sit": "Paralisado", "cells": ["", "", "", "RCM/APR", "", "", "", "", ""]}, {"item": "Antecipação Orçamentaria (1/12)", "rcm": "", "prio": "8", "sit": "Backlog", "cells": ["", "AGENDA", "", "", "", "", "", "", ""]}, {"item": "IPVA DIÁRIO", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "BAIXA IPVA/ PAP-IPVA", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "CIDE QPM", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "FUNDEB", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "FUNSET DIÁRIO", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "HONORÁRIOS PERICIAIS", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "INDENIZAÇÕES E RESTITUIÇÕES (CAUÇÃO)", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "PASEP", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "Retenções PASEP", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "ICMS DIÁRIO", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "BAIXA ICMS", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "IPI QPM", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "ROYALTIES QPM", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "Taxa RG PRODESP", "rcm": "", "prio": "9", "sit": "Planilha Homologação", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "Distribuição de Rendimentos CTU", "rcm": "", "prio": "10", "sit": "Backlog", "cells": ["", "", "", "REQ", "RCM/APR", "", "", "", ""]}, {"item": "CNPJ Alfanumerico", "rcm": "", "prio": "11", "sit": "Backlog", "cells": ["", "", "", "", "RCM/APR", "", "", "", ""]}, {"item": "SIGEO - PARMGER", "rcm": "32", "prio": "12", "sit": "Em Desenvolvimento", "cells": ["", "", "", "", "ANL", "TST/HML", "", "", ""]}, {"item": "SIGEO Saldos Contabeis, LC 131", "rcm": "39", "prio": "13", "sit": "Em Desenvolvimento", "cells": ["", "", "", "", "ANL", "TST/HML", "", "", ""]}, {"item": "Dívida Pública", "rcm": "", "prio": "14", "sit": "Backlog", "cells": ["", "REQ", "RCM/APR", "", "", "", "", "", ""]}, {"item": "SIGEO - Documentos / Fluxo Doc", "rcm": "", "prio": "15", "sit": "", "cells": ["", "", "", "", "REQ", "", "", "", ""]}, {"item": "SIGEO - Cotas", "rcm": "", "prio": "16", "sit": "", "cells": ["", "", "", "", "REQ", "", "", "", ""]}, {"item": "Cartão Corporativo - BANCO DO BRASIL", "rcm": "", "prio": "", "sit": "Backlog", "cells": ["", "REQ", "", "", "", "", "", "", ""]}]};
+const INFRA = {"items": [{"item": "Balanceamento de Banco de Dados", "time": "DEV", "prio": "alta", "janela": "Abertura", "obs": "SPRINT 20"}, {"item": "LogAudit - Mecanismo de Integração", "time": "DEV", "prio": "alta", "janela": "Abertura", "obs": "SPRINT 20"}, {"item": "LogAudit - Inserção de Logs/Negocios na Aplicação", "time": "DEV", "prio": "alta", "janela": "Abertura", "obs": "Evolução"}, {"item": "Integração com Módulos de Demandas", "time": "DEV", "prio": "alta", "janela": "Abertura", "obs": "SPRINT 14"}, {"item": "Endpoints de Monitoração (Ver necessidade de mais algum endpoint)", "time": "DEV", "prio": "media", "janela": "FLEX", "obs": "SPRINT 15"}, {"item": "Atualização da Documentação de Arquitetura (MAR)", "time": "DEV", "prio": "media", "janela": "FLEX", "obs": "SPRINT 16"}, {"item": "Melhorias Documentação SIGEFService", "time": "DEV", "prio": "media", "janela": "FLEX", "obs": "SPRINT 15"}, {"item": "Migração - Nova Arquitetura (Definir Escopo)", "time": "DEV", "prio": "media", "janela": "FLEX", "obs": "Evolução - SPRINT 20"}, {"item": "Expurgo de Arquivos de Pagamento de Banco", "time": "DEV", "prio": "media", "janela": "FLEX", "obs": "Evolução"}, {"item": "Limpeza WebConfig", "time": "DEV", "prio": "media", "janela": "FLEX", "obs": "SPRINT18"}, {"item": "Chatbot", "time": "DEV", "prio": "media", "janela": "FLEX", "obs": "Evolução"}, {"item": "Novo Framework - Angular - Melhorias usabilidade", "time": "DEV", "prio": "baixa", "janela": "FLEX", "obs": "Evolução"}, {"item": "Interface Gráfica - Permitir Colar Dados (Ver escopo)", "time": "DEV", "prio": "baixa", "janela": "FLEX", "obs": "Evolução"}, {"item": "Atualização documentação Infra (RIS)", "time": "INFRA", "prio": "baixa", "janela": "FLEX", "obs": "( RIS ) - (Documentação será entregue até dia 15/07"}, {"item": "Treinamento tecnico da Equipe de Infra", "time": "INFRA", "prio": "media", "janela": "FLEX", "obs": "Em outubro, durante a última fase dos treinamentos, será realizada uma apresentação técnica pelas equipes de Infraestrutura e DBA, abordando os documentos de infraestrutura enviado, com foco na orientação técnica aos participantes"}, {"item": "Utilização de Power Designer", "time": "INFRA", "prio": "", "janela": "", "obs": "Checar necessidade"}, {"item": "Melhoria do Dicionário de Dados", "time": "PROJETO", "prio": "media", "janela": "FLEX", "obs": "Em andamento , será entregue junto a documentação em 16/10/26 ( sprint 20 )"}]};
 
 /* ---------------- infra ---------------- */
 const STATUS={ ok:{c:"ok",t:"Concluído"}, run:{c:"run",t:"Em andamento"}, late:{c:"late",t:"Atrasado"}, wait:{c:"wait",t:"Aguardando"} };
@@ -452,7 +477,7 @@ function setTab(t){
   document.getElementById('tab-indra').hidden  = (t!=='indra');
   document.getElementById('tab-editor').hidden = (t!=='editor');
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===t));
-  if(t==='indra'){ renderCronoIndra(); renderBoard(); }
+  if(t==='indra'){ renderCronoIndra(); renderBoard(); renderInfra(); }
 }
 
 /* ---------------- seletor de semanas ---------------- */
@@ -544,6 +569,29 @@ function renderCronoIndra(){
         <span><i style="background:transparent">★</i>Marco (Go-Live)</span>
         <span><i style="background:var(--late)"></i>Estamos aqui</span>
       </div>`;
+}
+
+/* ---------------- infraestrutura ---------------- */
+function renderInfra(){
+  const el=document.getElementById('c-infra'); if(!el) return;
+  const items=(INFRA&&INFRA.items)||[];
+  const PRIO={alta:'Alta',media:'Média',baixa:'Baixa'};
+  const head=`<tr><th>Item</th><th>Time</th><th>Prioridade</th><th>Janela</th><th>Observação</th></tr>`;
+  const body=items.map(it=>{
+    const pc=it.prio||'none'; const pt=PRIO[it.prio]||'—';
+    const jl=String(it.janela||'').toLowerCase();
+    const jc = jl.startsWith('abert')?'abertura' : (jl==='flex'?'flex':'');
+    const jan = it.janela?`<span class="jan ${jc}">${esc(it.janela)}</span>`:'';
+    const time = it.time?`<span class="tag team">${esc(it.time)}</span>`:'';
+    return `<tr>
+      <td class="i-item">${esc(it.item)}</td>
+      <td>${time}</td>
+      <td><span class="prio ${pc}">${pt}</span></td>
+      <td>${jan}</td>
+      <td class="i-obs">${esc(it.obs||'')}</td>
+    </tr>`;
+  }).join('');
+  el.innerHTML=`<table class="infra"><thead>${head}</thead><tbody>${body}</tbody></table>`;
 }
 
 /* ---------------- board Indra ---------------- */
@@ -661,17 +709,21 @@ const ED_TPL = {
     <label>Código<input placeholder="RCM 30 / APIs / RCI"></label>
     <label>Título<input placeholder="Adaptações de Pagamentos"></label>
     <label>Nota<input placeholder="Validação concluída em 17/06."></label>
-    <label>Status<select><option value="run">Em andamento</option><option value="ok">Concluído</option><option value="late">Atrasado</option></select></label></div>`,
-  dec:()=>`<div class="ed-row"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
-    <label>Decisão<input placeholder="Missão presencial confirmada de 14 a 16/07."></label></div>`,
+    <label>Status<select><option value="run">Em andamento</option><option value="ok">Concluído</option><option value="late">Atrasado</option><option value="wait">Aguardando</option></select></label>
+    <label>Responsável<input placeholder="(opcional)"></label></div>`,
+  dec:()=>`<div class="ed-row dec"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
+    <label>Decisão<input placeholder="Missão presencial confirmada de 14 a 16/07."></label>
+    <label>Responsável<input placeholder="(opcional)"></label></div>`,
   ag:()=>`<div class="ed-row ag"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
     <label>Data<input placeholder="29/06–03/07"></label>
     <label>Agenda<input placeholder="Concluir o RCM 19"></label>
-    <label>Detalhe<input placeholder="Libera parametrização dos grupos"></label></div>`,
+    <label>Detalhe<input placeholder="Libera parametrização dos grupos"></label>
+    <label>Responsável<input placeholder="(opcional)"></label></div>`,
   at:()=>`<div class="ed-row at"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
     <label>Ponto de atenção<input placeholder="Módulo Dívida — RC032"></label>
     <label>Detalhe<input placeholder="Prazo expirou em 08/06."></label>
-    <label>Severidade<select><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></label></div>`,
+    <label>Severidade<select><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></label>
+    <label>Responsável<input placeholder="(opcional)"></label></div>`,
 };
 const ED_MAP={occ:'ed-occ',dec:'ed-dec',ag:'ed-ag',at:'ed-at'};
 function edAdd(kind){ document.getElementById(ED_MAP[kind]).insertAdjacentHTML('beforeend', ED_TPL[kind]()); }
@@ -690,12 +742,12 @@ async function edSubmit(){
     atualizadoEm: document.getElementById('ed-atu').value.trim(),
     estamosAqui: parseInt(document.getElementById('ed-atual').value,10) || 1,
     ocorrencias: [...document.querySelectorAll('#ed-occ .ed-row')].map(r=>({
-      codigo:edVal(r,0), titulo:edVal(r,1), nota:edVal(r,2), status:edVal(r,3) })),
-    decisoes: [...document.querySelectorAll('#ed-dec .ed-row')].map(r=>edVal(r,0)),
+      codigo:edVal(r,0), titulo:edVal(r,1), nota:edVal(r,2), status:edVal(r,3), responsavel:edVal(r,4) })),
+    decisoes: [...document.querySelectorAll('#ed-dec .ed-row')].map(r=>({ decisao:edVal(r,0), responsavel:edVal(r,1) })),
     agendas: [...document.querySelectorAll('#ed-ag .ed-row')].map(r=>({
-      data:edVal(r,0), agenda:edVal(r,1), detalhe:edVal(r,2) })),
+      data:edVal(r,0), agenda:edVal(r,1), detalhe:edVal(r,2), responsavel:edVal(r,3) })),
     pontosAtencao: [...document.querySelectorAll('#ed-at .ed-row')].map(r=>({
-      ponto:edVal(r,0), detalhe:edVal(r,1), severidade:edVal(r,2) })),
+      ponto:edVal(r,0), detalhe:edVal(r,1), severidade:edVal(r,2), responsavel:edVal(r,3) })),
   };
   btn.disabled = true;
   status.textContent = 'Enviando…';
@@ -728,13 +780,13 @@ function edGenerate(){
   const atual=parseInt(document.getElementById('ed-atual').value,10)||1;
   const id="s"+Date.now().toString().slice(-6);
   const occ=[...document.querySelectorAll('#ed-occ .ed-row')].map(r=>
-    `      { cod:"${edQ(edVal(r,0))}", titulo:"${edQ(edVal(r,1))}", nota:"${edQ(edVal(r,2))}", status:"${edVal(r,3)}" },`).join('\n');
+    `      { cod:"${edQ(edVal(r,0))}", titulo:"${edQ(edVal(r,1))}", nota:"${edQ(edVal(r,2))}", status:"${edVal(r,3)}", resp:"${edQ(edVal(r,4))}" },`).join('\n');
   const dec=[...document.querySelectorAll('#ed-dec .ed-row')].map(r=>
-    `      "${edQ(edVal(r,0))}",`).join('\n');
+    `      { texto:"${edQ(edVal(r,0))}", resp:"${edQ(edVal(r,1))}" },`).join('\n');
   const ag=[...document.querySelectorAll('#ed-ag .ed-row')].map(r=>
-    `      { data:"${edQ(edVal(r,0))}", texto:"${edQ(edVal(r,1))}", sub:"${edQ(edVal(r,2))}" },`).join('\n');
+    `      { data:"${edQ(edVal(r,0))}", texto:"${edQ(edVal(r,1))}", sub:"${edQ(edVal(r,2))}", resp:"${edQ(edVal(r,3))}" },`).join('\n');
   const at=[...document.querySelectorAll('#ed-at .ed-row')].map(r=>
-    `      { texto:"${edQ(edVal(r,0))}", sub:"${edQ(edVal(r,1))}", sev:"${edVal(r,2)}" },`).join('\n');
+    `      { texto:"${edQ(edVal(r,0))}", sub:"${edQ(edVal(r,1))}", sev:"${edVal(r,2)}", resp:"${edQ(edVal(r,3))}" },`).join('\n');
   const block =
 `  {
     id:"${id}", label:"${edQ(label)}", atualizado:"${edQ(atu)}",
