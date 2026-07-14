@@ -950,7 +950,16 @@ async function loadData(){
     }
     // lista de RCMs (aba RCMs da planilha), quando presente
     if(!Array.isArray(json) && Array.isArray(json.rcms) && json.rcms.length){
-      RCMS = json.rcms.map(r=>({ rcm:r.rcm||'', objetivo:r.objetivo||'', situacao:r.situacao||'', responsavel:r.responsavel||'', area:r.area||'', detalhe:r.detalhe||'' }));
+      // tolerante a acento e variações de cabeçalho vindas do Apps Script
+      const pickK=(o,...ks)=>{ for(const k of ks){ if(o[k]!=null && String(o[k]).trim()!=='') return String(o[k]).trim(); } return ''; };
+      RCMS = json.rcms.map(r=>({
+        rcm:        pickK(r,'rcm','RCM'),
+        objetivo:   pickK(r,'objetivo','Objetivo'),
+        situacao:   pickK(r,'situacao','situação','Situação'),
+        responsavel:pickK(r,'responsavel','responsável','sugestao de responsavel','sugestão de responsável','Sugestão de Responsável'),
+        area:       pickK(r,'area','área','Área'),
+        detalhe:    pickK(r,'detalhe','observacao','observação','Observação')
+      }));
     }
   }catch(err){
     if(connEl) connEl.textContent = 'Falha ao conectar — usando dados de exemplo';
