@@ -641,7 +641,7 @@ function renderRcms(){
         || (r.responsavel||'').toLowerCase().includes(fs)
         || (r.area||'').toLowerCase().includes(fs);
   });
-  const head=`<tr><th>RCM</th><th>Objetivo</th><th>Situação</th><th>Sugestão de Responsável</th><th>Área</th><th>Observação</th></tr>`;
+  const head=`<tr><th>RCM</th><th>Objetivo</th><th>Situação</th><th>Responsável</th><th>Área</th><th>Observação</th></tr>`;
   const body=items.length? items.map(r=>{
     return `<tr>
       <td class="i-item">${esc(r.rcm)}</td>
