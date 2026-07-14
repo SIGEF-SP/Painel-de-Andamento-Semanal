@@ -148,9 +148,8 @@
   table.infra th, table.infra td{ padding:8px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
   table.infra thead th{ position:sticky; top:0; background:var(--brand-wash); color:var(--brand-deep); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap; z-index:1; }
   table.infra tbody tr:last-child td{ border-bottom:none; }
-  table.infra .i-item{ font-weight:600; color:var(--ink); min-width:180px; }
-  table.infra .i-obs{ color:var(--muted); font-size:11.5px; min-width:150px; }
-  table.infra .i-obj{ color:var(--ink); font-size:11.5px; min-width:280px; max-width:420px; line-height:1.4; }
+  table.infra .i-item{ font-weight:600; color:var(--ink); min-width:220px; }
+  table.infra .i-obs{ color:var(--muted); font-size:11.5px; min-width:180px; }
   table.infra .i-resp{ color:var(--ink); font-size:11.5px; min-width:150px; }
   table.infra .i-area{ color:var(--muted); font-size:11.5px; white-space:nowrap; }
   .tag{ display:inline-block; font-size:10.5px; font-weight:700; border-radius:6px; padding:2px 8px; white-space:nowrap; }
@@ -637,21 +636,19 @@ function renderRcms(){
     if(!fs) return true;
     return (r.rcm||'').toLowerCase().includes(fs)
         || (r.situacao||'').toLowerCase().includes(fs)
-        || (r.objetivo||'').toLowerCase().includes(fs)
         || (r.responsavel||'').toLowerCase().includes(fs)
         || (r.area||'').toLowerCase().includes(fs);
   });
-  const head=`<tr><th>RCM</th><th>Objetivo</th><th>Situação</th><th>Responsável</th><th>Área</th><th>Observação</th></tr>`;
+  const head=`<tr><th>RCM</th><th>Situação</th><th>Responsável</th><th>Área</th><th>Observação</th></tr>`;
   const body=items.length? items.map(r=>{
     return `<tr>
       <td class="i-item">${esc(r.rcm)}</td>
-      <td class="i-obj">${esc(r.objetivo||'')}</td>
       <td><span class="badge ${sitClass(r.situacao)}">${esc(r.situacao||'—')}</span></td>
       <td class="i-resp">${esc(r.responsavel||'')}</td>
       <td class="i-area">${esc(r.area||'')}</td>
       <td class="i-obs">${esc(r.detalhe||'')}</td>
     </tr>`;
-  }).join('') : `<tr><td class="board-empty" colspan="6">Nenhum RCM para o filtro atual.</td></tr>`;
+  }).join('') : `<tr><td class="board-empty" colspan="5">Nenhum RCM para o filtro atual.</td></tr>`;
   el.innerHTML=`<table class="infra"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   document.getElementById('rcount').textContent = `${items.length} de ${(RCMS||[]).length} RCMs`;
 
@@ -954,7 +951,6 @@ async function loadData(){
       const pickK=(o,...ks)=>{ for(const k of ks){ if(o[k]!=null && String(o[k]).trim()!=='') return String(o[k]).trim(); } return ''; };
       RCMS = json.rcms.map(r=>({
         rcm:        pickK(r,'rcm','RCM'),
-        objetivo:   pickK(r,'objetivo','Objetivo'),
         situacao:   pickK(r,'situacao','situação','Situação'),
         responsavel:pickK(r,'responsavel','responsável','sugestao de responsavel','sugestão de responsável','Sugestão de Responsável'),
         area:       pickK(r,'area','área','Área'),
