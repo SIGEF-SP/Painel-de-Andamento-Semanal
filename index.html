@@ -485,6 +485,17 @@ function idxSemanaAtual(){
   return best;
 }
 
+// converte uma data dd/mm/aaaa na coluna (quinzena) do gantt: jun 2026 = col 1 (1ª q) e 2 (2ª q), jul = 3 e 4, ...
+function ganttColFromDate(s){
+  const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if(!m) return null;
+  let [,d,mo,y]=m; y=y.length===2?2000+parseInt(y,10):parseInt(y,10); d=parseInt(d,10); mo=parseInt(mo,10);
+  const monthsSinceJun=(y-2026)*12 + (mo-6);
+  let col = monthsSinceJun*2 + (d<=15?1:2);
+  if(col<1) col=1; if(col>16) col=16;
+  return col;
+}
+
 function sortAgendas(arr){
   const key=a=>{ const m=String(a.data||'').match(/(\d{1,2})\/(\d{1,2})/); return m ? (parseInt(m[2],10)*100+parseInt(m[1],10)) : 9999; };
   return arr.map((a,i)=>[a,i]).sort((x,y)=> (key(x[0])-key(y[0])) || (x[1]-y[1])).map(p=>p[0]);
@@ -511,6 +522,9 @@ function setTab(t){
 /* ---------------- seletor de semanas ---------------- */
 function initWeeks(){
   const sel=document.getElementById('wk');
+  // ordena cronologicamente (mais antiga -> mais recente) pela data de atualização,
+  // independente da ordem devolvida pela API (o Apps Script não ordena dd/mm/aaaa corretamente)
+  SEMANAS.sort((a,b)=>parseDataBR(a.atualizado)-parseDataBR(b.atualizado));
   sel.innerHTML = SEMANAS.map((w,i)=>`<option value="${i}">${esc(w.label)}</option>`).join('');
   sel.value = idxSemanaAtual();
 }
@@ -587,7 +601,8 @@ function timeline(c, atual){
 
 /* ---------------- cronograma na aba Indra ---------------- */
 function renderCronoIndra(){
-  const atual = (SEMANAS[idxSemanaAtual()] && SEMANAS[idxSemanaAtual()].atual) || 1;
+  const wk = SEMANAS[idxSemanaAtual()];
+  const atual = (wk && ganttColFromDate(wk.atualizado)) || (wk && wk.atual) || 1;
   document.getElementById('c-crono-indra').innerHTML =
     timeline(CRONOGRAMA, atual)
     + CRONOGRAMA.notas.map(x=>`<div class="tl-note"><span class="num">${x.n}</span><span>${esc(x.texto)}</span></div>`).join('')
