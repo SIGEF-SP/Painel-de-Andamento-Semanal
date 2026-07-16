@@ -207,7 +207,6 @@
       <button class="tab active" data-tab="semana" onclick="setTab('semana')">Andamento Semanal</button>
       <button class="tab" data-tab="indra" onclick="setTab('indra')">Cronograma</button>
       <button class="tab" data-tab="rcms" onclick="setTab('rcms')">RCMs</button>
-      <button class="tab" data-tab="rotinas" onclick="showTab('rotinas')">Rotinas</button>
       <button class="tab" data-tab="editor" onclick="setTab('editor')">Atualizar</button>
     </div>
   </div>
@@ -296,25 +295,7 @@
       <div class="upnote">Situações mantidas na aba <b>RCMs</b> da planilha do Google Sheets. Edite lá (é atualizado automaticamente aqui).</div>
     </div>
   </section>
-<!-- ================= ABA: Rotinas Contábeis ================= -->
-<section id="tab-rotinas" hidden>
-  <div class="strip">
-    <div class="strip-txt">
-      <div class="strip-eyebrow">Backlog · Validação de Rotinas Contábeis</div>
-      <h1>Rotinas Contábeis</h1>
-    </div>
-  </div>
 
-  <div class="card" style="margin-top:14px;">
-    <div class="toolbar">
-      <input id="rotsearch" type="search" placeholder="Buscar rotina ou status…" oninput="renderRotinas()">
-      <span id="rotcount" style="font-size:12px;color:var(--muted);margin-left:auto;"></span>
-    </div>
-    <div id="c-rotinas-sit" class="rcm-sitbar"></div>
-    <div class="infra-scroll" id="c-rotinas"></div>
-    <div class="upnote">Status e observações mantidos na aba <b>RotinasContabeis</b> da planilha do Google Sheets. Edite lá (atualiza aqui automaticamente).</div>
-  </div>
-</section>
   <!-- ================= ABA: ATUALIZAR (editor) ================= -->
   <section id="tab-editor" hidden>
     <div class="strip">
@@ -531,60 +512,15 @@ const IC={
 
 /* ---------------- abas ---------------- */
 function setTab(t){
-  document.getElementById('tab-semana').hidden  = (t!=='semana');
-  document.getElementById('tab-indra').hidden   = (t!=='indra');
-  document.getElementById('tab-rcms').hidden    = (t!=='rcms');
-  document.getElementById('tab-rotinas').hidden = (t!=='rotinas');
-  document.getElementById('tab-editor').hidden  = (t!=='editor');
+  document.getElementById('tab-semana').hidden = (t!=='semana');
+  document.getElementById('tab-indra').hidden  = (t!=='indra');
+  document.getElementById('tab-rcms').hidden   = (t!=='rcms');
+  document.getElementById('tab-editor').hidden = (t!=='editor');
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===t));
-if(t==='indra'){ renderCronoIndra(); renderBoard(); renderInfra(); }
-if(t==='rcms'){ renderRcms(); }
-if(t==='rotinas'){ renderRotinas(); }
-}
-/* ---------------- Rotinas Contábeis ---------------- */
-let ROTINAS = []; // preenchido pelo fetch da planilha (aba RotinasContabeis)
-
-function rotStatusClass(s){
-  const t = String(s||'').toLowerCase();
-  if(t.includes('ajustada'))    return 'run';    // Validada e Ajustada → azul
-  if(t.includes('ressalva'))    return 'warn';   // Validada com Ressalvas → âmbar
-  if(t.includes('validada'))    return 'ok';     // Validada pura → verde
-  if(t.includes('solicitar'))   return 'late';   // Solicitar apresentação → vermelho
-  if(t.includes('apresentada')) return 'wait';   // Apresentada → cinza
-  return 'req';
+  if(t==='indra'){ renderCronoIndra(); renderBoard(); renderInfra(); }
+  if(t==='rcms'){ renderRcms(); }
 }
 
-function renderRotinas(){
-  const el = document.getElementById('c-rotinas'); if(!el) return;
-  const fs = (document.getElementById('rotsearch').value||'').toLowerCase();
-  const items = (ROTINAS||[]).filter(r=>{
-    if(!fs) return true;
-    return (r.rotina||'').toLowerCase().includes(fs)
-        || (r.status||'').toLowerCase().includes(fs)
-        || (r.observacao||'').toLowerCase().includes(fs);
-  });
-  const head = `<tr><th>Rotina</th><th>Status</th><th>Observações</th></tr>`;
-  const body = items.length ? items.map(r=>{
-    const obs = esc(r.observacao||'').replace(/\s*\|\s*/g, '<br>• ');
-    const obsHtml = obs ? ('• ' + obs) : '';
-    return `<tr>
-      <td class="i-item">${esc(r.rotina)}</td>
-      <td><span class="badge ${rotStatusClass(r.status)}">${esc(r.status||'—')}</span></td>
-      <td class="i-obs">${obsHtml}</td>
-    </tr>`;
-  }).join('') : `<tr><td class="board-empty" colspan="3">Nenhuma rotina para o filtro atual.</td></tr>`;
-  el.innerHTML = `<table class="infra"><thead>${head}</thead><tbody>${body}</tbody></table>`;
-  document.getElementById('rotcount').textContent = `${items.length} de ${(ROTINAS||[]).length} rotinas`;
-
-  const bar = document.getElementById('c-rotinas-sit');
-  if(bar){
-    const counts = {};
-    (ROTINAS||[]).forEach(r=>{ const k=r.status||'—'; counts[k]=(counts[k]||0)+1; });
-    bar.innerHTML = Object.keys(counts).sort().map(k=>
-      `<span class="badge ${rotStatusClass(k)}" style="cursor:pointer" onclick="document.getElementById('rotsearch').value='${esc(k).replace(/'/g,'')}';renderRotinas()">${esc(k)} · ${counts[k]}</span>`
-    ).join('');
-  }
-}
 /* ---------------- seletor de semanas ---------------- */
 function initWeeks(){
   const sel=document.getElementById('wk');
@@ -703,7 +639,7 @@ function renderRcms(){
         || (r.responsavel||'').toLowerCase().includes(fs)
         || (r.area||'').toLowerCase().includes(fs);
   });
-  const head=`<tr><th>RCM</th><th>Situação</th><th>Responsável</th><th>Área</th><th>Observação</th></tr>`;
+  const head=`<tr><th>RCM</th><th>Situação</th><th>Sugestão de Responsável</th><th>Área</th><th>Observação</th></tr>`;
   const body=items.length? items.map(r=>{
     return `<tr>
       <td class="i-item">${esc(r.rcm)}</td>
@@ -1026,15 +962,7 @@ async function loadData(){
     console.warn('Falha ao buscar dados da planilha:', err);
   }
 }
-// lista de Rotinas Contábeis (aba RotinasContabeis da planilha)
-if(!Array.isArray(json) && Array.isArray(json.rotinas) && json.rotinas.length){
-  const pickR=(o,...ks)=>{ for(const k of ks){ if(o[k]!=null && String(o[k]).trim()!=='') return String(o[k]).trim(); } return ''; };
-  ROTINAS = json.rotinas.map(r=>({
-    rotina:     pickR(r,'rotina','Rotina'),
-    status:     pickR(r,'status','Status','situacao','Situação'),
-    observacao: pickR(r,'observacao','observação','observacoes','observações','Observação','detalhe')
-  }));
-}
+
 /* ---------------- init ---------------- */
 function safeRender(){
   try{
