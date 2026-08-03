@@ -659,14 +659,15 @@ function renderRotinas(){
         || (r.status||'').toLowerCase().includes(fs)
         || (r.detalhe||'').toLowerCase().includes(fs);
   });
-  const head=`<tr><th>Rotina</th><th>Status</th><th>Observação</th></tr>`;
+  const head=`<tr><th>Rotina</th><th>Prazo</th><th>Status</th><th>Observação</th></tr>`;
   const body=items.length? items.map(r=>{
     return `<tr>
       <td class="i-item">${esc(r.rotina)}</td>
+      <td class="i-resp">${esc(r.prazo||'')}</td>
       <td><span class="badge ${rotClass(r.status)}">${esc(r.status||'—')}</span></td>
       <td class="i-obs">${esc(r.detalhe||'')}</td>
     </tr>`;
-  }).join('') : `<tr><td class="board-empty" colspan="3">Nenhuma rotina para o filtro atual.</td></tr>`;
+  }).join('') : `<tr><td class="board-empty" colspan="4">Nenhuma rotina para o filtro atual.</td></tr>`;
   el.innerHTML=`<table class="infra"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   document.getElementById('rotcount').textContent = `${items.length} de ${(ROTINAS||[]).length} rotinas`;
 
@@ -1071,6 +1072,7 @@ async function loadData(){
       ROTINAS = json.rotinas.map(r=>({
         rotina:  pickK(r,'rotina','Rotina'),
         status:  pickK(r,'status','Status','situacao','situação','Situação'),
+        prazo:   pickK(r,'prazo','Prazo'),
         detalhe: pickK(r,'detalhe','observacao','observação','Observação','obs')
       }));
     }
