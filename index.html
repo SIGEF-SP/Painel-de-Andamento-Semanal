@@ -74,7 +74,7 @@
 
   .agenda{ display:flex; gap:12px; padding:8px 0; border-top:1px solid var(--line); }
   .agenda:first-child{ border-top:none; }
-  .agenda-date{ flex:0 0 auto; width:82px; white-space:nowrap; font-size:10.5px; font-weight:700; color:var(--brand-deep); text-align:center; background:var(--brand-wash); border-radius:7px; padding:7px 4px; height:fit-content; line-height:1.2; }
+  .agenda-date{ flex:0 0 auto; width:max-content; min-width:56px; max-width:130px; overflow-wrap:break-word; hyphens:none; white-space:normal; font-size:10.5px; font-weight:700; color:var(--brand-deep); text-align:center; background:var(--brand-wash); border-radius:7px; padding:7px 8px; height:fit-content; line-height:1.2; }
   .agenda-text{ font-size:13.5px; align-self:center; } .agenda-text small{ color:var(--muted); display:block; font-size:11.5px; margin-top:1px; }
 
   .attn{ display:flex; gap:11px; padding:9px 0; border-top:1px solid var(--line); align-items:flex-start; }
@@ -182,21 +182,6 @@
 
   .ed-help{ font-size:13px; color:var(--muted); margin:0 0 14px; line-height:1.5; }
   .ed-help code{ background:var(--brand-wash); color:var(--brand-deep); padding:1px 5px; border-radius:4px; font-size:12px; }
-  .ed-grid{ display:grid; gap:10px; grid-template-columns:1fr; }
-  @media(min-width:640px){ .ed-grid{ grid-template-columns:2fr 1fr 1fr; } }
-  .ed-grid label, .ed-row label{ display:flex; flex-direction:column; gap:3px; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
-  .ed-grid input, .ed-row input, .ed-row select, .ed-row textarea{ font:inherit; font-size:13px; font-weight:400; text-transform:none; letter-spacing:0; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:8px; padding:7px 10px; width:100%; }
-  .ed-hint{ font-size:11px; color:var(--muted); margin:6px 0 0; }
-  .ed-sec{ margin-top:18px; border-top:1px solid var(--line); padding-top:12px; }
-  .ed-sec-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-size:13.5px; }
-  .ed-add{ font:inherit; font-size:12px; font-weight:600; color:var(--brand); background:var(--brand-wash); border:0; border-radius:8px; padding:5px 11px; cursor:pointer; }
-  .ed-row{ display:grid; gap:8px; grid-template-columns:1fr; background:#FAFCFE; border:1px solid var(--line); border-radius:8px; padding:10px; margin-bottom:8px; position:relative; }
-  @media(min-width:640px){ .ed-row.occ{ grid-template-columns:100px 1fr 1fr 120px 130px; } .ed-row.dec{ grid-template-columns:1fr 150px; } .ed-row.ag{ grid-template-columns:110px 1fr 1fr 130px; } .ed-row.at{ grid-template-columns:1fr 1fr 100px 130px; } }
-  .ed-row .ed-del{ position:absolute; top:6px; right:6px; border:0; background:transparent; color:var(--late); font-size:16px; cursor:pointer; line-height:1; }
-  .ed-actions{ display:flex; gap:10px; margin-top:20px; }
-  .ed-gen{ font:inherit; font-size:13px; font-weight:700; color:#fff; background:var(--brand); border:0; border-radius:8px; padding:9px 18px; cursor:pointer; }
-  .ed-copy{ font:inherit; font-size:13px; font-weight:600; color:var(--brand-deep); background:var(--brand-wash); border:0; border-radius:8px; padding:9px 16px; cursor:pointer; }
-  .ed-out{ width:100%; min-height:220px; margin-top:12px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11.5px; border:1px solid var(--line); border-radius:10px; padding:12px; background:#0F1E30; color:#CFE1F5; line-height:1.5; }
 
   [hidden]{ display:none !important; }
   .foot{ margin-top:22px; text-align:center; color:var(--muted); font-size:11.5px; }
@@ -216,7 +201,7 @@
       <button class="tab" data-tab="rotinas" onclick="setTab('rotinas')">Rotinas Contábeis</button>
       <button class="tab" data-tab="semcrono" onclick="setTab('semcrono')">Itens s/ Cronograma</button>
       <button class="tab" data-tab="resp" onclick="setTab('resp')">Responsáveis</button>
-      <button class="tab" data-tab="editor" onclick="setTab('editor')">Atualizar</button>
+      <button class="tab" data-tab="tributo" onclick="setTab('tributo')">Manter Tributo</button>
     </div>
   </div>
 
@@ -371,59 +356,37 @@
   </section>
 
   <!-- ================= ABA: ATUALIZAR (editor) ================= -->
-  <section id="tab-editor" hidden>
+  <section id="tab-tributo" hidden>
     <div class="strip">
      <img class="icon" data-app-icon alt="">
       <div class="strip-txt">
-        <div class="strip-eyebrow">Montar nova semana</div>
-        <h1>Atualizar o painel</h1>
+        <div class="strip-eyebrow">Tabela Manter Tributo · SAT / Receita</div>
+        <h1>Manter Tributo</h1>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <h2><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E6DB4" stroke-width="2" stroke-linecap="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span> Como atualizar</h2>
-      <p class="ed-help">Há duas formas de atualizar o painel — use a que for mais conveniente no momento:</p>
-      <ol class="ed-help" style="margin:0 0 4px 18px; padding:0;">
-        <li><b>Direto na planilha</b> — abra o Google Sheets e edite as abas <code>Semanas</code>, <code>Ocorrencias</code>, <code>Decisoes</code>, <code>Agendas</code> e <code>PontosAtencao</code>. Salva sozinho, sem precisar deste formulário.</li>
-        <li><b>Pelo formulário abaixo</b> — preencha os campos e clique em <b>Enviar para a planilha</b>. Ele grava uma linha nova em cada aba automaticamente, sem você precisar abrir o Sheets.</li>
-      </ol>
-      <p class="ed-help" style="margin-bottom:0;">Status da conexão: <b id="ed-conn-status">verificando…</b></p>
+      <h2><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E6DB4" stroke-width="2" stroke-linecap="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span> Sobre a tabela</h2>
+      <p class="ed-help">A tabela <b>Manter Tributo</b> reúne os campos de parametrização de cada tributo/código de arrecadação (SAT), organizados em duas partes: <b>Parte 1</b>, sem rateio, e <b>Parte 2</b>, com rateio. O preenchimento avança ao longo dos meses conforme as definições de negócio e a parametrização no SIGEF são concluídas.</p>
+      <p class="ed-help">Em agosto, houve avanço no preenchimento das informações relacionadas à DREM, com a conclusão do campo <b>Código da Unidade Gestora de Desvinculação da Receita</b> nas Partes 1 e 2, e também dos campos de <b>Domicílio Bancário</b> da Parte 2, complementando o que já havia sido levantado para a Parte 1.</p>
+      <p class="ed-help">Durante a revisão do modelo de codificação das receitas, identificou-se a necessidade de abertura de NRs específicas de <b>Multa</b> e <b>Juros</b> para os casos em que os códigos de arrecadação possuíam somente a Natureza de Receita do Principal. A proposta de abertura dessas NRs foi elaborada e validada pela Marlene, o que permitiu concluir, na <b>Parte 1</b>, o preenchimento dos campos de Naturezas de Receita de Principal, Multa e Juros e suas respectivas NRs de restituição. Na <b>Parte 2</b>, esses campos seguem "Em andamento", em função das particularidades dos códigos com rateio e de definições ainda pendentes.</p>
+      <p class="ed-help" style="margin-bottom:0;">Na Parte 1, os campos de <b>Roteiros Contábeis</b> permanecem como "A iniciar" na tabela, embora os respectivos roteiros já estejam em desenvolvimento — o que está pendente é o preenchimento desses campos na própria Tabela Manter Tributo. O avanço da Parte 2 continua condicionado às definições dos RCMs associados ao tratamento do rateio, que orientarão a parametrização e o posterior preenchimento dessas informações.</p>
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <h2><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E6DB4" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span> Nova semana</h2>
-
-      <div class="ed-grid">
-        <label>Rótulo da semana<input id="ed-label" placeholder="29 de junho a 3 de julho de 2026"></label>
-        <label>Atualizado em<input id="ed-atu" placeholder="03/07/2026"></label>
-        <label>Coluna "Estamos aqui" (1–16)<input id="ed-atual" type="number" min="1" max="16" placeholder="3"></label>
+      <div class="toolbar">
+        <input id="tribsearch" type="search" placeholder="Buscar campo…" oninput="renderTributo()">
+        <span id="tribcount" style="font-size:12px;color:var(--muted);margin-left:auto;"></span>
       </div>
-      <p class="ed-hint">Coluna: jun=1,2 · jul=3,4 · ago=5,6 · set=7,8 · out=9,10 · nov=11,12 · dez=13,14 · jan=15,16.</p>
-
-      <div class="ed-sec">
-        <div class="ed-sec-h"><b>Principais ocorrências / acontecimentos</b><button class="ed-add" onclick="edAdd('occ')">+ adicionar</button></div>
-        <div id="ed-occ"></div>
+      <div class="infra-scroll" id="c-tributo"></div>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i>Concluído</span>
+        <span><i style="background:var(--run)"></i>Em andamento</span>
+        <span><i style="background:var(--wait)"></i>A iniciar</span>
+        <span><i style="background:var(--late)"></i>Despriorizado</span>
+        <span><i style="background:#5A6B8C"></i>RCM (aguarda definição)</span>
       </div>
-      <div class="ed-sec">
-        <div class="ed-sec-h"><b>Decisões importantes</b><button class="ed-add" onclick="edAdd('dec')">+ adicionar</button></div>
-        <div id="ed-dec"></div>
-      </div>
-      <div class="ed-sec">
-        <div class="ed-sec-h"><b>Próximas agendas</b><button class="ed-add" onclick="edAdd('ag')">+ adicionar</button></div>
-        <div id="ed-ag"></div>
-      </div>
-      <div class="ed-sec">
-        <div class="ed-sec-h"><b>Pontos de atenção</b><button class="ed-add" onclick="edAdd('at')">+ adicionar</button></div>
-        <div id="ed-at"></div>
-      </div>
-
-      <div class="ed-actions">
-        <button class="ed-gen" id="ed-submit" onclick="edSubmit()">Enviar para a planilha</button>
-        <button class="ed-copy" onclick="edGenerate()">Gerar bloco (offline)</button>
-        <button class="ed-copy" id="ed-copy" onclick="edCopy()" hidden>Copiar bloco</button>
-      </div>
-      <p class="ed-hint" id="ed-submit-status"></p>
-      <textarea id="ed-out" class="ed-out" hidden readonly></textarea>
+      <div class="upnote">Situação mantida na aba <b>ManterTributo</b> da planilha do Google Sheets. Edite lá (é atualizado automaticamente aqui).</div>
     </div>
   </section>
 </div>
@@ -614,6 +577,64 @@ let RESP = [
 {"frente":"Capacitação, atendimento e acompanhamento das Setoriais","divisao":"(verificar)","responsavel":"Rita Joyanovic","prazo":"","observacao":""}
 ];
 
+// Tabela Manter Tributo — campos de parametrização por Código SAT, com o status de
+// preenchimento em cada parte (Parte 1 = sem rateio, Parte 2 = com rateio).
+// Posição referente ao final de agosto/2026, conforme e-mail de atualização.
+let TRIBUTO = [
+{"campo":"Código do Tributo (Código SAT)","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Beneficiário","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Nome do Tributo","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código da Unidade Gestora Receita","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Gestão Receita","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código da Unidade Gestora Financeira","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código da Gestão Financeira","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código da Unidade Gestora Restituição","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Gestão Restituição","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Evento de Arrecadação Financeira","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento Restituição Financeira","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento Classificação","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento Arrecadação Receita","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Identificador Uso Arrecadação Receita","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Número de Dias para Recolhimento","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Fonte Arrecadação Receita","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Natureza Receita Principal","parte1":"Concluído","parte2":"Em andamento"},
+{"campo":"Código do Natureza Receita Principal Restituição","parte1":"Concluído","parte2":"Em andamento"},
+{"campo":"Código do Natureza Receita Juros","parte1":"Concluído","parte2":"Em andamento"},
+{"campo":"Código do Natureza Receita Juros Restituição","parte1":"Concluído","parte2":"Em andamento"},
+{"campo":"Código do Natureza Receita Multa","parte1":"Concluído","parte2":"Em andamento"},
+{"campo":"Código do Natureza Receita Multa Restituição","parte1":"Concluído","parte2":"Em andamento"},
+{"campo":"Código do Natureza Receita Correção","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Natureza Receita Correção Restituição","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Evento Recolhimento","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Número Sequencial do Domicílio Bancário de Receita","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Número Sequencial do Domicílio Bancário de Restituição","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Evento Restituição","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento Arrecadação Receita Dedução","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento Restituição Receita","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento de Classificação Extra Orçamentária","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Identificador de Uso da Fonte Extra Orçamentária","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Fonte Extra Orçamentária","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Conta Contábil de DDO","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Tipo de Arrecadação: vazio, DDO, FUNDEB, Repasse Constitucional","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento Classificação da Receita de Dedução","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Descrição da Observação","parte1":"Despriorizado","parte2":"Despriorizado"},
+{"campo":"CPF ou CNPJ do Credor","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Flag que identifica que ocorrerá Conta a Receber","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Número do Ativo de Contas a Receber","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento de Classificação da Receita","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Indicador de associação ao Alvará Judicial","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Evento Restituição Processo","parte1":"Em andamento","parte2":"Em andamento"},
+{"campo":"Conta Contábil Principal Restituição Processo","parte1":"Em andamento","parte2":"Em andamento"},
+{"campo":"Conta Contábil Juros Restituição Processo","parte1":"Em andamento","parte2":"Em andamento"},
+{"campo":"Conta Contábil Multa Restituição Processo","parte1":"Em andamento","parte2":"Em andamento"},
+{"campo":"Conta Contábil Correção Restituição Processo","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código do Evento Extra-Orçamentária para o tipo de imputação J","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código do Evento Desvinculação Receita","parte1":"A iniciar","parte2":"A iniciar"},
+{"campo":"Código da Unidade Gestora de Desvinculação da Receita","parte1":"Concluído","parte2":"Concluído"},
+{"campo":"Código da Gestão da Desvinculação da Receita","parte1":"Despriorizado","parte2":"RCM"},
+{"campo":"Flag de distribuição/desvinculação de fonte recurso","parte1":"Concluído","parte2":"RCM"}
+];
+
 /* ---------------- infra ---------------- */
 const STATUS={ ok:{c:"ok",t:"Concluído"}, run:{c:"run",t:"Em andamento"}, late:{c:"late",t:"Atrasado"}, wait:{c:"wait",t:"Aguardando"} };
 const SEV={ alta:{c:"late",t:"Alta"}, media:{c:"warn",t:"Média"}, baixa:{c:"run",t:"Baixa"} };
@@ -659,32 +680,36 @@ function setTab(t){
   document.getElementById('tab-rotinas').hidden = (t!=='rotinas');
   document.getElementById('tab-semcrono').hidden = (t!=='semcrono');
   document.getElementById('tab-resp').hidden = (t!=='resp');
-  document.getElementById('tab-editor').hidden = (t!=='editor');
+  document.getElementById('tab-tributo').hidden = (t!=='tributo');
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===t));
   if(t==='indra'){ renderCronoIndra(); renderBoard(); renderInfra(); }
   if(t==='rcms'){ renderRcms(); }
   if(t==='rotinas'){ renderRotinas(); }
   if(t==='semcrono'){ renderSemCrono(); }
   if(t==='resp'){ renderResp(); }
+  if(t==='tributo'){ renderTributo(); }
 }
 
-/* Reaplica a renderização da aba atualmente visível (usado após loadData()) */
-function refreshVisibleTab(){
-  if(!document.getElementById('tab-semana').hidden){ initWeeks(); safeRender(); }
+/* Reaplica a renderização da aba atualmente visível (usado após loadData()).
+   Quando vem de loadData() (afterLoad=true), a semana selecionada é recalculada
+   para a mais recente, em vez de manter a seleção anterior (dados de exemplo). */
+function refreshVisibleTab(afterLoad){
+  if(!document.getElementById('tab-semana').hidden){ initWeeks(!!afterLoad); safeRender(); }
   if(!document.getElementById('tab-indra').hidden){ renderCronoIndra(); renderBoard(); renderInfra(); }
   if(!document.getElementById('tab-rcms').hidden){ renderRcms(); }
   if(!document.getElementById('tab-rotinas').hidden){ renderRotinas(); }
   if(!document.getElementById('tab-semcrono').hidden){ renderSemCrono(); }
   if(!document.getElementById('tab-resp').hidden){ renderResp(); }
+  if(!document.getElementById('tab-tributo').hidden){ renderTributo(); }
 }
 
 /* ---------------- seletor de semanas ---------------- */
-function initWeeks(){
+function initWeeks(forceLatest){
   const sel=document.getElementById('wk');
   const prev = sel.value;
   SEMANAS.sort((a,b)=>parseDataBR(a.atualizado)-parseDataBR(b.atualizado));
   sel.innerHTML = SEMANAS.map((w,i)=>`<option value="${i}">${esc(w.label)}</option>`).join('');
-  sel.value = prev && SEMANAS[prev] ? prev : idxSemanaAtual();
+  sel.value = forceLatest ? idxSemanaAtual() : (prev && SEMANAS[prev] ? prev : idxSemanaAtual());
 }
 
 /* ---------------- render aba semanal ---------------- */
@@ -987,6 +1012,36 @@ function renderResp(){
   document.getElementById('respcount').textContent = `${items.length} de ${all.length} frentes`;
 }
 
+/* ---------------- Manter Tributo ---------------- */
+function tribClass(status){
+  const t=String(status||'').toLowerCase();
+  if(t.includes('conclu'))    return 'ok';
+  if(t.includes('andamento')) return 'run';
+  if(t.includes('iniciar'))   return 'wait';
+  if(t.includes('despriori')) return 'late';
+  if(t==='rcm')                return 'req';
+  return 'req';
+}
+function renderTributo(){
+  const el=document.getElementById('c-tributo'); if(!el) return;
+  const fs=(document.getElementById('tribsearch').value||'').toLowerCase();
+  const all=(TRIBUTO||[]);
+  const items=all.filter(r=>{
+    if(!fs) return true;
+    return (r.campo||'').toLowerCase().includes(fs)
+        || (r.parte1||'').toLowerCase().includes(fs)
+        || (r.parte2||'').toLowerCase().includes(fs);
+  });
+  const head=`<tr><th>Campo</th><th>Status Parte 1 (sem rateio)</th><th>Status Parte 2 (com rateio)</th></tr>`;
+  const body=items.length? items.map(r=>`<tr>
+      <td class="i-item">${esc(r.campo)}</td>
+      <td><span class="badge ${tribClass(r.parte1)}">${esc(r.parte1||'—')}</span></td>
+      <td><span class="badge ${tribClass(r.parte2)}">${esc(r.parte2||'—')}</span></td>
+    </tr>`).join('') : `<tr><td class="board-empty" colspan="3">Nenhum campo para o filtro atual.</td></tr>`;
+  el.innerHTML=`<table class="infra"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+  document.getElementById('tribcount').textContent = `${items.length} de ${all.length} campos`;
+}
+
 /* ---------------- board Indra ---------------- */
 function parseDM(s, defMonth){
   const m=String(s).match(/(\d{1,2})(?:\/(\d{1,2}))?/);
@@ -1098,118 +1153,6 @@ function onUpload(ev){
   reader.readAsArrayBuffer(file);
 }
 
-/* ---------------- editor (aba Atualizar) ---------------- */
-const ED_TPL = {
-  occ:()=>`<div class="ed-row occ"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
-    <label>Código<input placeholder="RCM 30 / APIs / RCI"></label>
-    <label>Título<input placeholder="Adaptações de Pagamentos"></label>
-    <label>Nota<input placeholder="Validação concluída em 17/06."></label>
-    <label>Status<select><option value="run">Em andamento</option><option value="ok">Concluído</option><option value="late">Atrasado</option><option value="wait">Aguardando</option></select></label>
-    <label>Responsável<input placeholder="(opcional)"></label></div>`,
-  dec:()=>`<div class="ed-row dec"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
-    <label>Decisão<input placeholder="Missão presencial confirmada de 14 a 16/07."></label>
-    <label>Responsável<input placeholder="(opcional)"></label></div>`,
-  ag:()=>`<div class="ed-row ag"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
-    <label>Data<input placeholder="29/06–03/07"></label>
-    <label>Agenda<input placeholder="Concluir o RCM 19"></label>
-    <label>Detalhe<input placeholder="Libera parametrização dos grupos"></label>
-    <label>Responsável<input placeholder="(opcional)"></label></div>`,
-  at:()=>`<div class="ed-row at"><button class="ed-del" onclick="this.parentNode.remove()" title="remover">×</button>
-    <label>Ponto de atenção<input placeholder="Módulo Dívida — RC032"></label>
-    <label>Detalhe<input placeholder="Prazo expirou em 08/06."></label>
-    <label>Severidade<select><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></label>
-    <label>Responsável<input placeholder="(opcional)"></label></div>`,
-};
-const ED_MAP={occ:'ed-occ',dec:'ed-dec',ag:'ed-ag',at:'ed-at'};
-function edAdd(kind){ document.getElementById(ED_MAP[kind]).insertAdjacentHTML('beforeend', ED_TPL[kind]()); }
-function edVal(el,i){ const n=el.querySelectorAll('input,select,textarea')[i]; return n?n.value.trim():''; }
-function edQ(s){ return String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"'); }
-async function edSubmit(){
-  const btn = document.getElementById('ed-submit');
-  const status = document.getElementById('ed-submit-status');
-  if(!DATA_URL){
-    status.textContent = 'DATA_URL não configurada — use "Gerar bloco (offline)" abaixo.';
-    return;
-  }
-  const payload = {
-    rotulo: document.getElementById('ed-label').value.trim(),
-    atualizadoEm: document.getElementById('ed-atu').value.trim(),
-    estamosAqui: parseInt(document.getElementById('ed-atual').value,10) || 1,
-    ocorrencias: [...document.querySelectorAll('#ed-occ .ed-row')].map(r=>({
-      codigo:edVal(r,0), titulo:edVal(r,1), nota:edVal(r,2), status:edVal(r,3), responsavel:edVal(r,4) })),
-    decisoes: [...document.querySelectorAll('#ed-dec .ed-row')].map(r=>({ decisao:edVal(r,0), responsavel:edVal(r,1) })),
-    agendas: [...document.querySelectorAll('#ed-ag .ed-row')].map(r=>({
-      data:edVal(r,0), agenda:edVal(r,1), detalhe:edVal(r,2), responsavel:edVal(r,3) })),
-    pontosAtencao: [...document.querySelectorAll('#ed-at .ed-row')].map(r=>({
-      ponto:edVal(r,0), detalhe:edVal(r,1), severidade:edVal(r,2), responsavel:edVal(r,3) })),
-  };
-  btn.disabled = true;
-  status.textContent = 'Enviando…';
-  try{
-    const res = await fetch(DATA_URL, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify(payload)
-    });
-    const json = await res.json();
-    if(json && json.ok){
-      status.textContent = 'Semana gravada na planilha (id '+json.id_semana+'). Atualizando painel…';
-      await loadData(); refreshVisibleTab();
-      status.textContent = 'Gravado e painel atualizado com os novos dados.';
-    } else {
-      status.textContent = 'A planilha respondeu com erro: '+((json&&json.erro)||'desconhecido');
-    }
-  }catch(err){
-    status.textContent = 'Falha ao enviar (conexão). Use "Gerar bloco (offline)" como alternativa.';
-    console.warn('Falha ao enviar para a planilha:', err);
-  }finally{
-    btn.disabled = false;
-  }
-}
-
-function edGenerate(){
-  const label=document.getElementById('ed-label').value.trim()||"(semana)";
-  const atu=document.getElementById('ed-atu').value.trim()||"(data)";
-  const atual=parseInt(document.getElementById('ed-atual').value,10)||1;
-  const id="s"+Date.now().toString().slice(-6);
-  const occ=[...document.querySelectorAll('#ed-occ .ed-row')].map(r=>
-    `      { cod:"${edQ(edVal(r,0))}", titulo:"${edQ(edVal(r,1))}", nota:"${edQ(edVal(r,2))}", status:"${edVal(r,3)}", resp:"${edQ(edVal(r,4))}" },`).join('\n');
-  const dec=[...document.querySelectorAll('#ed-dec .ed-row')].map(r=>
-    `      { texto:"${edQ(edVal(r,0))}", resp:"${edQ(edVal(r,1))}" },`).join('\n');
-  const ag=[...document.querySelectorAll('#ed-ag .ed-row')].map(r=>
-    `      { data:"${edQ(edVal(r,0))}", texto:"${edQ(edVal(r,1))}", sub:"${edQ(edVal(r,2))}", resp:"${edQ(edVal(r,3))}" },`).join('\n');
-  const at=[...document.querySelectorAll('#ed-at .ed-row')].map(r=>
-    `      { texto:"${edQ(edVal(r,0))}", sub:"${edQ(edVal(r,1))}", sev:"${edVal(r,2)}", resp:"${edQ(edVal(r,3))}" },`).join('\n');
-  const block =
-`  {
-    id:"${id}", label:"${edQ(label)}", atualizado:"${edQ(atu)}",
-    atual:${atual},
-    rcms:[
-${occ}
-    ],
-    decisoes:[
-${dec}
-    ],
-    agendas:[
-${ag}
-    ],
-    atencao:[
-${at}
-    ],
-  },`;
-  const out=document.getElementById('ed-out');
-  out.value=block; out.hidden=false;
-  document.getElementById('ed-copy').hidden=false;
-}
-function edCopy(){
-  const out=document.getElementById('ed-out'); out.select();
-  navigator.clipboard?.writeText(out.value).then(
-    ()=>{ const b=document.getElementById('ed-copy'); b.textContent='Copiado ✓'; setTimeout(()=>b.textContent='Copiar',1500); },
-    ()=>{ document.execCommand('copy'); }
-  );
-}
-function edInit(){ edAdd('occ'); edAdd('dec'); edAdd('ag'); edAdd('at'); }
-
 /* ---------------- carregamento dos dados (Apps Script / Sheets) ---------------- */
 function mapApiSemana(s){
   return {
@@ -1293,6 +1236,14 @@ async function loadData(){
         observacao: pickK(r,'observacao','observação','Observação')
       }));
     }
+    // Manter Tributo (aba ManterTributo), quando presente
+    if(!Array.isArray(json) && Array.isArray(json.manterTributo) && json.manterTributo.length){
+      TRIBUTO = json.manterTributo.map(r=>({
+        campo:  pickK(r,'campo','Campo'),
+        parte1: pickK(r,'parte1','parte 1','status parte 1','status parte 1 (sem rateio)','Status Parte 1 (sem rateio)'),
+        parte2: pickK(r,'parte2','parte 2','status parte 2','status parte 2 (com rateio)','Status Parte 2 (com rateio)')
+      }));
+    }
   }catch(err){
     setConnStatus('falha ao conectar (' + err.message + ') — mostrando dados de exemplo', true);
     console.warn('Falha ao buscar dados da planilha:', err);
@@ -1328,10 +1279,11 @@ function safeRender(){
       (isso é o que resolve a demora percebida na aba Andamento Semanal: antes,
       nada aparecia até a planilha responder — agora aparece na hora e só é
       substituído silenciosamente quando os dados reais chegam). */
-initWeeks(); safeRender(); edInit();
+initWeeks(); safeRender();
 
-/* 2) Busca os dados reais da planilha em segundo plano e atualiza a aba visível. */
-loadData().then(()=>{ refreshVisibleTab(); });
+/* 2) Busca os dados reais da planilha em segundo plano e atualiza a aba visível,
+      já selecionando a semana mais recente preenchida (afterLoad=true). */
+loadData().then(()=>{ refreshVisibleTab(true); });
 </script>
 </body>
 </html>
